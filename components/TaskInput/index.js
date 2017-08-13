@@ -1,13 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TextInput
+} from 'react-native';
+import { Button } from 'react-native-elements';
 
 export default class TaskInput extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      text: ""
-    };
-  }
 
   render() {
     let textInputStyle = {
@@ -20,12 +19,13 @@ export default class TaskInput extends React.Component {
       <View>
         <TextInput
           style={textInputStyle}
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.text}
+          onChangeText={this.props.onNewTaskChange}
+          value={this.props.value}
         />
         <Button
           title="Add!"
-          onPress={this.props.confirmNewTask(this.state.text)}
+          onPress={this.props.confirmNewTask}
+          raised
         />
       </View>
     );

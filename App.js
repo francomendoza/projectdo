@@ -4,59 +4,105 @@ import {
   TouchableWithoutFeedback,
   View,
   Text,
-  Button,
   Keyboard
 } from 'react-native';
-// import { Container, Header, Body, View, Title, Content, Button, Text } from 'native-base';
+import { Button } from 'react-native-elements';
 import TaskList from './components/TaskList';
 import TaskInput from './components/TaskInput';
+import TaskCategorySelector from './components/TaskCategorySelector';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.handleNewTask = this.handleNewTask.bind(this);
     this.handleConfirmNewTask = this.handleConfirmNewTask.bind(this);
+    this.handleSelectCategory = this.handleSelectCategory.bind(this);
+    this.handleOnNewTaskChange = this.handleOnNewTaskChange.bind(this);
 
     this.state = {
-      text: false,
-      tasks: ["task1","task2"]
+      page: 'action',
+      tasks: ["task1","task2"],
+      new_task: {
+        name: "",
+        category: ""
+      }
     };
   }
 
   handleNewTask() {
     this.setState((prevState, props) => {
       return {
-        text: !prevState.text
+        page: 'category_selection'
       };
     });
   }
 
-  handleConfirmNewTask(value) {
+  handleSelectCategory(category_name) {
     return () => {
-      Keyboard.dismiss();
       this.setState((prevState, props) => {
-        let tasks = [...prevState.tasks, value];
+        // add text to input field
         return {
-          tasks
+          page: 'new_task',
+          new_task: {
+            name: `${category_name} `,
+            category: category_name
+          }
         };
-      })
-    }
+      });
+    };
+  }
+
+  handleConfirmNewTask() {
+    Keyboard.dismiss();
+    this.setState((prevState, props) => {
+      // validate
+      let tasks = [...prevState.tasks, prevState.new_task.name];
+      return {
+        tasks,
+        new_task: {
+          name: '',
+          category: ''
+        }
+      };
+    });
+    // POST data and wait/act on response
+  }
+
+  handleOnNewTaskChange(text) {
+    this.setState((prevState, props) => {
+      return {
+        new_task: {
+          name: text,
+          category_name: prevState.new_task.category_name
+        }
+      };
+    });
   }
 
   render() {
     let comp;
-    if (this.state.text) {
+    if (this.state.page === 'action') {
+      comp = <Button
+        onPress={this.handleNewTask}
+        title='New Task'
+        backgroundColor='#54a3ff'
+        raised
+      />;
+    } else if (this.state.page === 'category_selection') {
+      comp = <TaskCategorySelector
+        selectCategory={this.handleSelectCategory}
+      />;
+    } else if (this.state.page === 'new_task') {
       comp = <TaskInput
+        value={this.state.new_task.name}
+        onNewTaskChange={this.handleOnNewTaskChange}
         confirmNewTask={this.handleConfirmNewTask}
       />;
     }
+
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
-          <Button
-            onPress={this.handleNewTask}
-            title="New Task"
-          />
           {comp}
           <TaskList
             tasks={this.state.tasks}
@@ -72,6 +118,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
+    justifyContent: 'center'
+  }
 });

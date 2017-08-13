@@ -1,27 +1,20 @@
 import React from 'react';
-// import { Card, CardItem, Body, View, Title, Content, Button, Text } from 'native-base';
-import { StyleSheet, View, Text, Button } from 'react-native';
+import { List, ListItem } from 'react-native-elements';
 
 export default class TaskList extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.handleNewTask = this.handleNewTask.bind(this);
-  //
-  //   this.state = {
-  //     text: false,
-  //     tasks: []
-  //   };
-  // }
 
   render() {
     return (
-      <View>
+      <List style={{width: 300}}>
         {this.props.tasks.map((task, index) => {
-          return <Text
-            key={task+index}
-          >{task}</Text>;
+          return (
+            <ListItem
+              key={task+index}
+              title={task}
+            />
+          );
         })}
-      </View>
+      </List>
     );
   }
 }
