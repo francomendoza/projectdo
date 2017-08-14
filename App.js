@@ -134,6 +134,7 @@ export default class App extends React.Component {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
+          <View style={{height: 100}}/>
           {comp}
         </View>
       </TouchableWithoutFeedback>
@@ -146,6 +147,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center'
   }
 });
