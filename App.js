@@ -7,9 +7,10 @@ import {
   Keyboard
 } from 'react-native';
 import { Button } from 'react-native-elements';
-import TaskList from './components/TaskList';
+import HomePage from './components/HomePage';
 import TaskInput from './components/TaskInput';
 import TaskCategorySelector from './components/TaskCategorySelector';
+import TaskDueDate from './components/TaskDueDate';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -18,13 +19,16 @@ export default class App extends React.Component {
     this.handleConfirmNewTask = this.handleConfirmNewTask.bind(this);
     this.handleSelectCategory = this.handleSelectCategory.bind(this);
     this.handleOnNewTaskChange = this.handleOnNewTaskChange.bind(this);
+    this.handleOnCancel = this.handleOnCancel.bind(this);
+    this.handleSelectDueDate = this.handleSelectDueDate.bind(this);
 
     this.state = {
       page: 'action',
       tasks: ["task1","task2"],
       new_task: {
         name: "",
-        category: ""
+        category: "",
+        due_date: ''
       }
     };
   }
@@ -52,6 +56,23 @@ export default class App extends React.Component {
     };
   }
 
+  handleSelectDueDate(due_date) {
+    return () => {
+      // set due_date on new_task
+      // POST data then reset UI
+      this.setState((prevState, props) => {
+        return {
+          new_task: {
+            name: '',
+            category: '',
+            due_date: ''
+          },
+          page: 'action'
+        };
+      });
+    };
+  }
+
   handleConfirmNewTask() {
     Keyboard.dismiss();
     this.setState((prevState, props) => {
@@ -59,13 +80,9 @@ export default class App extends React.Component {
       let tasks = [...prevState.tasks, prevState.new_task.name];
       return {
         tasks,
-        new_task: {
-          name: '',
-          category: ''
-        }
+        page: 'due_date'
       };
     });
-    // POST data and wait/act on response
   }
 
   handleOnNewTaskChange(text) {
@@ -79,34 +96,45 @@ export default class App extends React.Component {
     });
   }
 
+  handleOnCancel() {
+    this.setState({
+      page: 'action',
+      new_task: {
+        name: '',
+        category: ''
+      }
+    });
+  }
+
   render() {
     let comp;
     if (this.state.page === 'action') {
-      comp = <Button
-        onPress={this.handleNewTask}
-        title='New Task'
-        backgroundColor='#54a3ff'
-        raised
+      comp = <HomePage
+        tasks={this.state.tasks}
+        handleNewTask={this.handleNewTask}
       />;
     } else if (this.state.page === 'category_selection') {
       comp = <TaskCategorySelector
         selectCategory={this.handleSelectCategory}
+        onCancel={this.handleOnCancel}
       />;
     } else if (this.state.page === 'new_task') {
       comp = <TaskInput
         value={this.state.new_task.name}
         onNewTaskChange={this.handleOnNewTaskChange}
         confirmNewTask={this.handleConfirmNewTask}
+        onCancel={this.handleOnCancel}
       />;
+    } else if (this.state.page === 'due_date') {
+      comp = <TaskDueDate
+        selectDueDate={this.handleSelectDueDate}
+      />
     }
 
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           {comp}
-          <TaskList
-            tasks={this.state.tasks}
-          />
         </View>
       </TouchableWithoutFeedback>
     );

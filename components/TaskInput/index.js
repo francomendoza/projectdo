@@ -4,7 +4,7 @@ import {
   View,
   TextInput
 } from 'react-native';
-import { Button } from 'react-native-elements';
+import { Button, Icon } from 'react-native-elements';
 
 export default class TaskInput extends React.Component {
 
@@ -13,14 +13,21 @@ export default class TaskInput extends React.Component {
       height: 40,
       borderColor: 'gray',
       borderWidth: 1,
-      width: 300
+      width: 300,
+      margin: 10
     };
     return (
       <View>
+        <Icon
+          name='close'
+          color='#00aced'
+          onPress={this.props.onCancel}
+        />
         <TextInput
           style={textInputStyle}
           onChangeText={this.props.onNewTaskChange}
           value={this.props.value}
+          autoFocus
         />
         <Button
           title="Add!"
