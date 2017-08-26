@@ -24,7 +24,15 @@ export default class App extends React.Component {
 
     this.state = {
       page: 'action',
-      tasks: ["task1","task2"],
+      tasks: [
+        "task1",
+        "task2"
+        // {
+        //   id: 1,
+        //   description: "",
+        //   due_date: ""
+        // }
+      ],
       new_task: {
         name: "",
         category: "",
@@ -60,6 +68,23 @@ export default class App extends React.Component {
     return () => {
       // set due_date on new_task
       // POST data then reset UI
+      fetch('http://localhost:3000/missions/create', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          description: this.state.new_task.name,
+          category: this.state.new_task.category,
+          option: this.state.new_task.due_date
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+
+      });
+      // reset UI
       this.setState((prevState, props) => {
         return {
           new_task: {

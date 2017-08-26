@@ -9,7 +9,7 @@ export default class TaskCategorySelector extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      buttons: ['Get', 'Research', 'Make']
+      buttons: ['Get', 'Research', 'Make', 'Amazon', 'Read', 'Watch', 'Listen']
     };
   }
 
