@@ -35,7 +35,7 @@ export default class App extends React.Component {
       ],
       new_task: {
         name: "",
-        category: "",
+        category_id: "",
         due_date: ''
       }
     };
@@ -49,16 +49,21 @@ export default class App extends React.Component {
     });
   }
 
-  handleSelectCategory(category_name) {
+  handleSelectCategory(category_obj) {
     return () => {
       this.setState((prevState, props) => {
         // add text to input field
+        const new_task = Object.assign({},
+          prevState.new_task,
+          {
+            name: `${category_obj.description} `,
+            category_id: category_obj.id
+          }
+        );
+
         return {
           page: 'new_task',
-          new_task: {
-            name: `${category_name} `,
-            category: category_name
-          }
+          new_task
         };
       });
     };
@@ -76,8 +81,8 @@ export default class App extends React.Component {
         },
         body: JSON.stringify({
           description: this.state.new_task.name,
-          category: this.state.new_task.category,
-          option: this.state.new_task.due_date
+          category_id: this.state.new_task.category_id,
+          option: due_date
         })
       })
       .then(response => response.json())
@@ -89,7 +94,7 @@ export default class App extends React.Component {
         return {
           new_task: {
             name: '',
-            category: '',
+            category_id: null,
             due_date: ''
           },
           page: 'action'
@@ -112,11 +117,9 @@ export default class App extends React.Component {
 
   handleOnNewTaskChange(text) {
     this.setState((prevState, props) => {
+      const new_task = Object.assign({}, prevState.new_task, { name: text });
       return {
-        new_task: {
-          name: text,
-          category_name: prevState.new_task.category_name
-        }
+        new_task
       };
     });
   }
@@ -126,7 +129,8 @@ export default class App extends React.Component {
       page: 'action',
       new_task: {
         name: '',
-        category: ''
+        category_id: null,
+        due_date: ''
       }
     });
   }
