@@ -7,6 +7,7 @@ import {
   Keyboard
 } from 'react-native';
 import { Button } from 'react-native-elements';
+import moment from 'moment';
 import HomePage from './components/HomePage';
 import TaskInput from './components/TaskInput';
 import TaskCategorySelector from './components/TaskCategorySelector';
@@ -22,17 +23,74 @@ export default class App extends React.Component {
     this.handleOnCancel = this.handleOnCancel.bind(this);
     this.handleSelectDueDate = this.handleSelectDueDate.bind(this);
 
+    const tasks = [
+      {
+        id: 1,
+        description: 'task1',
+        category_id: 1,
+        due_date: '2017-08-29'
+      },
+      {
+        id: 2,
+        description: 'task2',
+        category_id: 1,
+        due_date: '2017-08-27'
+      },
+      {
+        id: 3,
+        description: 'task3',
+        category_id: 1,
+        due_date: '2017-09-27'
+      }
+    ];
+
+    const due_date_categories = [
+      {
+        label: 'EOD',
+        datetime: moment().endOf('day')
+      },
+      {
+        label: 'EOWeek',
+        datetime: moment().endOf('week').subtract(2, 'days')
+      },
+      {
+        label: 'EOWeekend',
+        datetime: moment().endOf('week')
+      },
+      {
+        label: 'EOMonth',
+        datetime: moment().endOf('month')
+      },
+      {
+        label: 'EOYear',
+        datetime: moment().endOf('year')
+      },
+      {
+        label: 'Eventually',
+        datetime: null
+      },
+    ];
+
+    let tasks_by_due_date_category = tasks.reduce((accum, task) => {
+
+      const cat = due_date_categories.find((cat) => {
+        return moment(task.due_date).isBefore(cat.datetime);
+      });
+
+      if (!accum[cat.label]) {
+        accum[cat.label] = [];
+      }
+
+      accum[cat.label].push(task);
+
+      return accum;
+
+    }, {});
+
     this.state = {
       page: 'action',
-      tasks: [
-        "task1",
-        "task2"
-        // {
-        //   id: 1,
-        //   description: "",
-        //   due_date: ""
-        // }
-      ],
+      tasks_by_due_date_category,
+      tasks,
       new_task: {
         name: "",
         category_id: "",
@@ -107,7 +165,15 @@ export default class App extends React.Component {
     Keyboard.dismiss();
     this.setState((prevState, props) => {
       // validate
-      let tasks = [...prevState.tasks, prevState.new_task.name];
+      let new_task = {
+        id: null,
+        description: prevState.new_task.name,
+        category_id: prevState.new_task.category_id,
+        due_date: null
+      };
+
+      let tasks = [...prevState.tasks, new_task];
+
       return {
         tasks,
         page: 'due_date'
@@ -139,7 +205,7 @@ export default class App extends React.Component {
     let comp;
     if (this.state.page === 'action') {
       comp = <HomePage
-        tasks={this.state.tasks}
+        tasks_by_due_date_category={this.state.tasks_by_due_date_category}
         handleNewTask={this.handleNewTask}
       />;
     } else if (this.state.page === 'category_selection') {

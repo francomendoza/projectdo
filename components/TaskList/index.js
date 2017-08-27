@@ -9,8 +9,8 @@ export default class TaskList extends React.Component {
         {this.props.tasks.map((task, index) => {
           return (
             <ListItem
-              key={task+index}
-              title={task}
+              key={task.description + index}
+              title={task.description}
             />
           );
         })}
