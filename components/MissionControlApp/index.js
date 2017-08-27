@@ -13,7 +13,7 @@ import TaskInput from './components/TaskInput';
 import TaskCategorySelector from './components/TaskCategorySelector';
 import TaskDueDate from './components/TaskDueDate';
 
-export default class App extends React.Component {
+export default class MissionControlApp extends React.Component {
   constructor(props) {
     super(props);
     this.handleNewTask = this.handleNewTask.bind(this);
