@@ -23,6 +23,8 @@ export default class App extends React.Component {
     this.handleOnCancel = this.handleOnCancel.bind(this);
     this.handleSelectDueDate = this.handleSelectDueDate.bind(this);
 
+    this.generateTasksByDueDate = this.generateTasksByDueDate.bind(this);
+
     const tasks = [
       {
         id: 1,
@@ -44,7 +46,7 @@ export default class App extends React.Component {
       }
     ];
 
-    const due_date_categories = [
+    this.due_date_categories = [
       {
         label: 'EOD',
         datetime: moment().endOf('day')
@@ -71,9 +73,43 @@ export default class App extends React.Component {
       },
     ];
 
-    let tasks_by_due_date_category = tasks.reduce((accum, task) => {
+    let tasks_by_due_date_category = {};
 
-      const cat = due_date_categories.find((cat) => {
+    this.state = {
+      page: 'action',
+      tasks_by_due_date_category,
+      tasks,
+      new_task: {
+        name: "",
+        category_id: "",
+        due_date: ''
+      }
+    };
+  }
+
+  componentWillMount() {
+    fetch('http://localhost:3000/missions', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      let tasks = data.data,
+        tasks_by_due_date_category = this.generateTasksByDueDate(tasks);
+
+      this.setState({
+        tasks,
+        tasks_by_due_date_category
+      });
+    });
+  }
+
+  generateTasksByDueDate(tasks) {
+    return tasks.reduce((accum, task) => {
+
+      const cat = this.due_date_categories.find((cat) => {
         return moment(task.due_date).isBefore(cat.datetime);
       });
 
@@ -86,17 +122,6 @@ export default class App extends React.Component {
       return accum;
 
     }, {});
-
-    this.state = {
-      page: 'action',
-      tasks_by_due_date_category,
-      tasks,
-      new_task: {
-        name: "",
-        category_id: "",
-        due_date: ''
-      }
-    };
   }
 
   handleNewTask() {
