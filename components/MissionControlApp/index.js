@@ -8,10 +8,10 @@ import {
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import moment from 'moment';
-import HomePage from './components/HomePage';
-import TaskInput from './components/TaskInput';
-import TaskCategorySelector from './components/TaskCategorySelector';
-import TaskDueDate from './components/TaskDueDate';
+import HomePage from '../HomePage';
+import TaskInput from '../TaskInput';
+import TaskCategorySelector from '../TaskCategorySelector';
+import TaskDueDate from '../TaskDueDate';
 
 export default class MissionControlApp extends React.Component {
   constructor(props) {
