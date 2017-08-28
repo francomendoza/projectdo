@@ -13,6 +13,7 @@ import HomePage from '../HomePage';
 import TaskInput from '../TaskInput';
 import TaskCategorySelector from '../TaskCategorySelector';
 import TaskDueDate from '../TaskDueDate';
+import { addNewMission } from '../../redux/actions';
 
 class MissionControlApp extends React.Component {
   constructor(props) {
@@ -80,7 +81,8 @@ class MissionControlApp extends React.Component {
       })
       .then(response => response.json())
       .then(data => {
-
+        let missionData = data.data;
+        this.props.dispatch(addNewMission(missionData));
       });
       // reset UI
       this.setState((prevState, props) => {
@@ -100,17 +102,7 @@ class MissionControlApp extends React.Component {
     Keyboard.dismiss();
     this.setState((prevState, props) => {
       // validate
-      let new_task = {
-        id: null,
-        description: prevState.new_task.name,
-        category_id: prevState.new_task.category_id,
-        due_date: null
-      };
-
-      let tasks = [...prevState.tasks, new_task];
-
       return {
-        tasks,
         page: 'due_date'
       };
     });
@@ -210,9 +202,15 @@ const due_date_categories = [
 const generateTasksByDueDate = (tasks) => {
   return tasks.reduce((accum, task) => {
 
-    const cat = due_date_categories.find((cat) => {
+    let cat = due_date_categories.find((cat) => {
       return moment(task.due_date).isBefore(cat.datetime);
     });
+
+    // TODO: fix this shit, tasks should end up in the correct bucket
+    cat = cat || {
+      label: 'Eventually',
+      datetime: null
+    };
 
     if (!accum[cat.label]) {
       accum[cat.label] = [];

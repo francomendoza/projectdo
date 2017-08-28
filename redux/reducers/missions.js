@@ -23,6 +23,8 @@ export function missions(state = initialState, action) {
   switch (action.type) {
     case 'POPULATE_MISSIONS':
       return action.missions;
+    case 'ADD_NEW_MISSION':
+      return [...state, action.new_mission];
     default:
       return state;
   }
