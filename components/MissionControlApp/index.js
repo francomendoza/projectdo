@@ -8,12 +8,13 @@ import {
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import moment from 'moment';
+import { connect } from 'react-redux';
 import HomePage from '../HomePage';
 import TaskInput from '../TaskInput';
 import TaskCategorySelector from '../TaskCategorySelector';
 import TaskDueDate from '../TaskDueDate';
 
-export default class MissionControlApp extends React.Component {
+class MissionControlApp extends React.Component {
   constructor(props) {
     super(props);
     this.handleNewTask = this.handleNewTask.bind(this);
@@ -23,105 +24,14 @@ export default class MissionControlApp extends React.Component {
     this.handleOnCancel = this.handleOnCancel.bind(this);
     this.handleSelectDueDate = this.handleSelectDueDate.bind(this);
 
-    this.generateTasksByDueDate = this.generateTasksByDueDate.bind(this);
-
-    const tasks = [
-      {
-        id: 1,
-        description: 'task1',
-        category_id: 1,
-        due_date: '2017-08-29'
-      },
-      {
-        id: 2,
-        description: 'task2',
-        category_id: 1,
-        due_date: '2017-08-27'
-      },
-      {
-        id: 3,
-        description: 'task3',
-        category_id: 1,
-        due_date: '2017-09-27'
-      }
-    ];
-
-    this.due_date_categories = [
-      {
-        label: 'EOD',
-        datetime: moment().endOf('day')
-      },
-      {
-        label: 'EOWeek',
-        datetime: moment().endOf('week').subtract(2, 'days')
-      },
-      {
-        label: 'EOWeekend',
-        datetime: moment().endOf('week')
-      },
-      {
-        label: 'EOMonth',
-        datetime: moment().endOf('month')
-      },
-      {
-        label: 'EOYear',
-        datetime: moment().endOf('year')
-      },
-      {
-        label: 'Eventually',
-        datetime: null
-      },
-    ];
-
-    let tasks_by_due_date_category = {};
-
     this.state = {
       page: 'action',
-      tasks_by_due_date_category,
-      tasks,
       new_task: {
         name: "",
         category_id: "",
         due_date: ''
       }
     };
-  }
-
-  componentWillMount() {
-    fetch('http://localhost:3000/missions', {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      let tasks = data.data,
-        tasks_by_due_date_category = this.generateTasksByDueDate(tasks);
-
-      this.setState({
-        tasks,
-        tasks_by_due_date_category
-      });
-    });
-  }
-
-  generateTasksByDueDate(tasks) {
-    return tasks.reduce((accum, task) => {
-
-      const cat = this.due_date_categories.find((cat) => {
-        return moment(task.due_date).isBefore(cat.datetime);
-      });
-
-      if (!accum[cat.label]) {
-        accum[cat.label] = [];
-      }
-
-      accum[cat.label].push(task);
-
-      return accum;
-
-    }, {});
   }
 
   handleNewTask() {
@@ -230,7 +140,7 @@ export default class MissionControlApp extends React.Component {
     let comp;
     if (this.state.page === 'action') {
       comp = <HomePage
-        tasks_by_due_date_category={this.state.tasks_by_due_date_category}
+        tasks_by_due_date_category={this.props.tasks_by_due_date_category}
         handleNewTask={this.handleNewTask}
       />;
     } else if (this.state.page === 'category_selection') {
@@ -269,3 +179,59 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   }
 });
+
+const due_date_categories = [
+  {
+    label: 'EOD',
+    datetime: moment().endOf('day')
+  },
+  {
+    label: 'EOWeek',
+    datetime: moment().endOf('week').subtract(2, 'days')
+  },
+  {
+    label: 'EOWeekend',
+    datetime: moment().endOf('week')
+  },
+  {
+    label: 'EOMonth',
+    datetime: moment().endOf('month')
+  },
+  {
+    label: 'EOYear',
+    datetime: moment().endOf('year')
+  },
+  {
+    label: 'Eventually',
+    datetime: null
+  },
+];
+
+const generateTasksByDueDate = (tasks) => {
+  return tasks.reduce((accum, task) => {
+
+    const cat = due_date_categories.find((cat) => {
+      return moment(task.due_date).isBefore(cat.datetime);
+    });
+
+    if (!accum[cat.label]) {
+      accum[cat.label] = [];
+    }
+
+    accum[cat.label].push(task);
+
+    return accum;
+
+  }, {});
+};
+
+const mapStateToProps = (state) => {
+  return {
+    tasks: state.missions,
+    tasks_by_due_date_category: generateTasksByDueDate(state.missions)
+  };
+}
+
+const MappedMissionControlApp = connect(mapStateToProps)(MissionControlApp);
+
+export default MappedMissionControlApp;
