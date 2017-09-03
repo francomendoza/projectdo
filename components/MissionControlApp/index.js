@@ -6,7 +6,7 @@ import {
   Text,
   Keyboard
 } from 'react-native';
-import { Button } from 'react-native-elements';
+import { Button, Header } from 'react-native-elements';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import HomePage from '../HomePage';
@@ -14,6 +14,7 @@ import TaskInput from '../TaskInput';
 import TaskCategorySelector from '../TaskCategorySelector';
 import TaskDueDate from '../TaskDueDate';
 import { addNewMission } from '../../redux/actions';
+import { dueDateCategories } from '../../utils/dueDateCategories';
 
 class MissionControlApp extends React.Component {
   constructor(props) {
@@ -154,12 +155,16 @@ class MissionControlApp extends React.Component {
     }
 
     return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <View style={{height: 100}}/>
+      <View
+      style={styles.container}
+      onPress={Keyboard.dismiss}>
+        <Header
+          centerComponent={<Text>Mission Control</Text>}
+        />
+        <View style={{marginTop: 100, flex: 1}}>
           {comp}
         </View>
-      </TouchableWithoutFeedback>
+      </View>
     );
   }
 }
@@ -172,45 +177,18 @@ const styles = StyleSheet.create({
   }
 });
 
-const due_date_categories = [
-  {
-    label: 'EOD',
-    datetime: moment().endOf('day')
-  },
-  {
-    label: 'EOWeek',
-    datetime: moment().endOf('week').subtract(2, 'days')
-  },
-  {
-    label: 'EOWeekend',
-    datetime: moment().endOf('week')
-  },
-  {
-    label: 'EOMonth',
-    datetime: moment().endOf('month')
-  },
-  {
-    label: 'EOYear',
-    datetime: moment().endOf('year')
-  },
-  {
-    label: 'Eventually',
-    datetime: null
-  },
-];
-
 const generateTasksByDueDate = (tasks) => {
   return tasks.reduce((accum, task) => {
 
-    let cat = due_date_categories.find((cat) => {
-      return moment(task.due_date).isBefore(cat.datetime);
+    let cat = dueDateCategories.find((cat) => {
+      if (cat.label === 'Eventually') {
+        return true;
+      }
+      return moment(task.due_date).isSameOrBefore(cat.datetime);
     });
 
     // TODO: fix this shit, tasks should end up in the correct bucket
-    cat = cat || {
-      label: 'Eventually',
-      datetime: null
-    };
+    cat = cat;
 
     if (!accum[cat.label]) {
       accum[cat.label] = [];
@@ -221,6 +199,10 @@ const generateTasksByDueDate = (tasks) => {
     return accum;
 
   }, {});
+
+  // {
+  //   EOD: [{task1}, {task2}]
+  // }
 };
 
 const mapStateToProps = (state) => {

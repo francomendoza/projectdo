@@ -2,47 +2,56 @@ import React from 'react';
 import {
   StyleSheet,
   View,
+  SectionList,
   Text,
 } from 'react-native';
-import { Button } from 'react-native-elements';
-import TaskList from '../TaskList';
+import {
+  Button,
+  List,
+  ListItem,
+} from 'react-native-elements';
+import { dueDateCategories } from '../../utils/dueDateCategories';
 
 export default class HomePage extends React.Component {
 
   render() {
+    let sections = dueDateCategories
+      .map((category_obj, index) => {
+        return {
+          sectionName: category_obj.label,
+          data: this.props.tasks_by_due_date_category[category_obj.label] || []
+        };
+      });
+
+    const renderSectionHeader = ({section}) => {
+      return <Text>{section.sectionName}</Text>;
+    }
+    let sectionList = <SectionList
+      renderSectionHeader={renderSectionHeader}
+      renderItem={({item}) => <ListItem title={item.description}/>}
+      keyExtractor={(item) => item.description}
+      sections={sections}
+    />;
+
     return (
-      <View>
+      <View style={styles.container}>
         <Button
           onPress={this.props.handleNewTask}
-          title='New Task'
+          title='New Mission'
           backgroundColor='#54a3ff'
           raised
         />
-        {Object.keys(this.props.tasks_by_due_date_category).map((cat_key, index) => {
-          return (
-            <View
-              key={index + cat_key + '-view'}
-            >
-              <Text
-                key={index + cat_key + '-title'}
-              >{cat_key}</Text>
-              <TaskList
-                tasks={this.props.tasks_by_due_date_category[cat_key]}
-                key={index + cat_key + '-list'}
-              />
-            </View>
-          );
-        })}
+        <List>
+          {sectionList}
+        </List>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  // button: {
-  //   height: 50,
-  //   backgroundColor: '#54a3ff',
-  //   borderRadius: 6,
-  //   width: 300
-  // }
+  container: {
+    width: 300,
+    flex: 1
+  }
 });
