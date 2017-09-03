@@ -1,5 +1,11 @@
 {
   "expo": {
-    "sdkVersion": "19.0.0"
+    "name": "Mission Control",
+    "icon": "",
+    "verion": "0.0.0",
+    "sdkVersion": "19.0.0",
+    "ios": {
+      "bundleIdentifier": "com.flashback.missioncontrol"
+    }
   }
 }

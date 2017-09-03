@@ -68,7 +68,7 @@ class MissionControlApp extends React.Component {
     return () => {
       // set due_date on new_task
       // POST data then reset UI
-      fetch('http://localhost:3000/missions/create', {
+      fetch('192.168.1.3:3000/missions/create', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -156,12 +156,14 @@ class MissionControlApp extends React.Component {
 
     return (
       <View
-      style={styles.container}
+      style={StyleSheet.absoluteFill}
       onPress={Keyboard.dismiss}>
         <Header
+          leftComponent={<View/>}
           centerComponent={<Text>Mission Control</Text>}
+          rightComponent={<View/>}
         />
-        <View style={{marginTop: 100, flex: 1}}>
+        <View style={{marginTop: 100, alignItems: 'center', flex: 1}}>
           {comp}
         </View>
       </View>

@@ -13,6 +13,11 @@ import {
 import { dueDateCategories } from '../../utils/dueDateCategories';
 
 export default class HomePage extends React.Component {
+  renderSectionHeader({section}) {
+    return <Text
+      style={styles.sectionHeader}
+    >{section.sectionName}</Text>;
+  }
 
   render() {
     let sections = dueDateCategories
@@ -23,27 +28,26 @@ export default class HomePage extends React.Component {
         };
       });
 
-    const renderSectionHeader = ({section}) => {
-      return <Text>{section.sectionName}</Text>;
-    }
     let sectionList = <SectionList
-      renderSectionHeader={renderSectionHeader}
+      renderSectionHeader={this.renderSectionHeader}
       renderItem={({item}) => <ListItem title={item.description}/>}
       keyExtractor={(item) => item.description}
       sections={sections}
     />;
 
     return (
-      <View style={styles.container}>
+      <View style={StyleSheet.absoluteFill}>
         <Button
           onPress={this.props.handleNewTask}
           title='New Mission'
           backgroundColor='#54a3ff'
           raised
         />
-        <List>
-          {sectionList}
-        </List>
+        <View style={styles.container}>
+          <List style={styles.list}>
+            {sectionList}
+          </List>
+        </View>
       </View>
     );
   }
@@ -51,7 +55,15 @@ export default class HomePage extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 10,
+    flex: 1,
+    alignItems: 'center',
+  },
+  list: {
     width: 300,
-    flex: 1
-  }
+  },
+  sectionHeader: {
+    height: 20,
+    padding: 2,
+  },
 });
