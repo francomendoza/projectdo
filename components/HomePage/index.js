@@ -3,6 +3,7 @@ import {
   StyleSheet,
   View,
   SectionList,
+  TouchableHighlight,
   Text,
 } from 'react-native';
 import {
@@ -10,6 +11,7 @@ import {
   List,
   ListItem,
 } from 'react-native-elements';
+import Swipeable from 'react-native-swipeable';
 import { dueDateCategories } from '../../utils/dueDateCategories';
 
 export default class HomePage extends React.Component {
@@ -17,6 +19,17 @@ export default class HomePage extends React.Component {
     return <Text
       style={styles.sectionHeader}
     >{section.sectionName}</Text>;
+  }
+
+  renderItem({item}) {
+    const rightButtons = [
+      <TouchableHighlight><Text>Complete</Text></TouchableHighlight>,
+    ];
+    return (
+      <Swipeable rightButtons={rightButtons}>
+        <ListItem title={item.description}/>
+      </Swipeable>
+    );
   }
 
   render() {
@@ -30,7 +43,7 @@ export default class HomePage extends React.Component {
 
     let sectionList = <SectionList
       renderSectionHeader={this.renderSectionHeader}
-      renderItem={({item}) => <ListItem title={item.description}/>}
+      renderItem={this.renderItem}
       keyExtractor={(item) => item.description}
       sections={sections}
     />;
