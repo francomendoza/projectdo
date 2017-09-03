@@ -11,3 +11,10 @@ export function addNewMission(new_mission) {
     new_mission
   };
 }
+
+export function removeMission(mission_id) {
+  return {
+    type: 'REMOVE_MISSION',
+    mission_id
+  }
+}

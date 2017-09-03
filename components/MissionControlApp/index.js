@@ -135,6 +135,7 @@ class MissionControlApp extends React.Component {
       comp = <HomePage
         tasks_by_due_date_category={this.props.tasks_by_due_date_category}
         handleNewTask={this.handleNewTask}
+        dispatch={this.props.dispatch}
       />;
     } else if (this.state.page === 'category_selection') {
       comp = <TaskCategorySelector
