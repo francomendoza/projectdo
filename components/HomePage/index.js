@@ -5,6 +5,7 @@ import {
   SectionList,
   TouchableHighlight,
   Text,
+  Alert,
 } from 'react-native';
 import {
   Button,
@@ -14,6 +15,7 @@ import {
 import Swipeable from 'react-native-swipeable';
 import { dueDateCategories } from '../../utils/dueDateCategories';
 import { removeMission } from '../../redux/actions';
+import { HOST_NAME } from '../../utils/host_name';
 
 export default class HomePage extends React.Component {
   constructor(props) {
@@ -28,16 +30,45 @@ export default class HomePage extends React.Component {
   }
 
   renderItem({item}) {
+    const onRightActionRelease = () => {
+      fetch(`${HOST_NAME}/missionstatus/update`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          mission_id: item.id,
+          status: 'complete',
+        })
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(`Network response failed somehow.`);
+      })
+      .then(data => {
+        if (data.status == 'SUCCESS') {
+          // for now just remove mission from list
+          this.props.dispatch(removeMission(item.id));
+        }
+      })
+      .catch((error) => {
+        Alert.alert(
+          'Sorry',
+          `Fetch failed sorry dude: ${error}`
+        );
+      });
+    };
+
     const rightButtons = [
       <TouchableHighlight
-      style={{flex: 1, justifyContent: 'center', backgroundColor: '#54a3ff'}}>
-      <Text style={{paddingLeft: 6, color: 'white'}}>Complete</Text>
+        style={{flex: 1, justifyContent: 'center', backgroundColor: '#54a3ff'}}
+        onPress={onRightActionRelease}>
+        <Text style={{paddingLeft: 6, color: 'white'}}>Complete</Text>
       </TouchableHighlight>,
     ];
-
-    const onRightActionRelease = () => {
-      this.props.dispatch(removeMission(item.id));
-    };
 
     return (
       <Swipeable

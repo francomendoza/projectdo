@@ -15,6 +15,7 @@ import TaskCategorySelector from '../TaskCategorySelector';
 import TaskDueDate from '../TaskDueDate';
 import { addNewMission } from '../../redux/actions';
 import { dueDateCategories } from '../../utils/dueDateCategories';
+import { HOST_NAME } from '../../utils/host_name';
 
 class MissionControlApp extends React.Component {
   constructor(props) {
@@ -68,7 +69,7 @@ class MissionControlApp extends React.Component {
     return () => {
       // set due_date on new_task
       // POST data then reset UI
-      fetch('192.168.1.3:3000/missions/create', {
+      fetch(`${HOST_NAME}/missions/create`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',

@@ -3,10 +3,11 @@ import MappedMissionControlApp from './components/MissionControlApp';
 import configStore from './redux/configStore';
 import { Provider } from 'react-redux';
 import { populateMissions } from './redux/actions';
+import { HOST_NAME } from './utils/host_name';
 
 const store = configStore();
 
-fetch('http://localhost:3000/missions', {
+fetch(`${HOST_NAME}/missions`, {
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
