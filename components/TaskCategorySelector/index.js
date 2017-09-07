@@ -16,7 +16,8 @@ export default class TaskCategorySelector extends React.Component {
         { id: 4, description: 'Amazon' },
         { id: 5, description: 'Read' },
         { id: 6, description: 'Watch' },
-        { id: 7, description: 'Listen' }
+        { id: 7, description: 'Listen' },
+        { id: 8, description: 'Schedule' },
       ]
     };
   }
