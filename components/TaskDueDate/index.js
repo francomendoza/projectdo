@@ -9,7 +9,7 @@ export default class TaskDueDate extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      buttons: ['EOD', 'EOWeek', 'EOWeekend', 'EOMonth', 'EOYear', 'Eventually']
+      buttons: ['EOD', 'EODTomorrow', 'EOWeek', 'EOWeekend', 'EOMonth', 'EOYear', 'Eventually']
     };
   }
 

@@ -10,6 +10,10 @@ export const dueDateCategories = [
     datetime: moment().endOf('day')
   },
   {
+    label: 'EODTomorrow',
+    datetime: moment().add(1, 'day').endOf('day')
+  },
+  {
     label: 'EOWeek',
     datetime: moment().endOf('week').subtract(1, 'days')
   },
