@@ -21,6 +21,10 @@ export default class HomePage extends React.Component {
   constructor(props) {
     super(props);
     this.renderItem = this.renderItem.bind(this);
+
+    this.state = {
+      sectionListScrollEnabled: true
+    }
   }
 
   renderSectionHeader({section}) {
@@ -74,7 +78,10 @@ export default class HomePage extends React.Component {
       <Swipeable
         rightButtons={rightButtons}
         onRightActionRelease={onRightActionRelease}
-        rightActionActivationDistance={300}>
+        rightActionActivationDistance={300}
+        onSwipeStart={() => this.setState({sectionListScrollEnabled: false})}
+        onSwipeRelease={() => this.setState({sectionListScrollEnabled: true})}
+      >
         <ListItem title={item.description}/>
       </Swipeable>
     );
@@ -94,6 +101,7 @@ export default class HomePage extends React.Component {
       renderItem={this.renderItem}
       keyExtractor={(item) => item.description}
       sections={sections}
+      scrollEnabled={this.state.sectionListScrollEnabled}
     />;
 
     return (
