@@ -2,6 +2,7 @@ import React from 'react';
 import {
   StyleSheet,
   View,
+  ScrollView,
 } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 
@@ -18,6 +19,7 @@ export default class TaskCategorySelector extends React.Component {
         { id: 6, description: 'Watch' },
         { id: 7, description: 'Listen' },
         { id: 8, description: 'Schedule' },
+        { id: 9, description: 'Other' },
       ]
     };
   }
@@ -30,16 +32,20 @@ export default class TaskCategorySelector extends React.Component {
           color='#00aced'
           onPress={this.props.onCancel}
         />
-        {this.state.buttons.map((button_obj, index) => {
-          return <Button
-            onPress={this.props.selectCategory(button_obj)}
-            title={button_obj.description}
-            backgroundColor='#54a3ff'
-            key={index + button_obj.id}
-            style={styles.button}
-            raised
-          />;
-        })}
+        <ScrollView>
+          {this.state.buttons.map((button_obj, index) => {
+            return (
+              <Button
+                onPress={this.props.selectCategory(button_obj)}
+                title={button_obj.description}
+                backgroundColor='#54a3ff'
+                key={index + button_obj.id}
+                style={styles.button}
+                raised
+              />
+            );
+          })}
+        </ScrollView>
       </View>
     );
   }

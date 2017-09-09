@@ -49,10 +49,13 @@ class MissionControlApp extends React.Component {
     return () => {
       this.setState((prevState, props) => {
         // add text to input field
+        const name = category_obj.description === 'Other' ?
+          '' : `${category_obj.description} `;
+
         const new_task = Object.assign({},
           prevState.new_task,
           {
-            name: `${category_obj.description} `,
+            name,
             category_id: category_obj.id
           }
         );
