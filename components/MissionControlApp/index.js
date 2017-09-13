@@ -68,9 +68,10 @@ class MissionControlApp extends React.Component {
     };
   }
 
-  handleSelectDueDate(due_date) {
+  handleSelectDueDate(due_date_option) {
     return () => {
-      // set due_date on new_task
+      // set due_date_option on new_task
+      let due_date_obj = dueDateCategories.find(cat => cat.label === due_date_option);
       // POST data then reset UI
       fetch(`${HOST_NAME}/missions/create`, {
         method: 'POST',
@@ -81,7 +82,10 @@ class MissionControlApp extends React.Component {
         body: JSON.stringify({
           description: this.state.new_task.name,
           category_id: this.state.new_task.category_id,
-          option: due_date
+          due_date: {
+            datetime: due_date_obj.datetime,
+            option: due_date_option,
+          },
         })
       })
       .then(response => response.json())
