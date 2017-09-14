@@ -1,2 +1,2 @@
 export const HOST_NAME = process.env.NODE_ENV === 'development' ?
-  'http://localhost:3000' : 'https://projectmissioncontrol.herokuapp.com'
+  'http://192.168.1.12:3000' : 'https://projectmissioncontrol.herokuapp.com'

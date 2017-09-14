@@ -9,12 +9,14 @@ import {
 import { Button, Header } from 'react-native-elements';
 import moment from 'moment';
 import { connect } from 'react-redux';
+import { Notifications, Permissions } from 'expo';
 import HomePage from '../HomePage';
 import TaskInput from '../TaskInput';
 import TaskCategorySelector from '../TaskCategorySelector';
 import TaskDueDate from '../TaskDueDate';
 import { addNewMission } from '../../redux/actions';
 import { dueDateCategories } from '../../utils/dueDateCategories';
+import { generateNotificationTimes } from '../../utils/generateNotificationTimes';
 import { HOST_NAME } from '../../utils/host_name';
 
 class MissionControlApp extends React.Component {
@@ -35,6 +37,18 @@ class MissionControlApp extends React.Component {
         due_date: ''
       }
     };
+  }
+
+  async componentDidMount() {
+    let result = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    if (result.status === 'granted') {
+     console.log('Notification permissions granted.')
+    }
+
+    const notification_listener = Notifications.addListener(({ origin, data, remote }) => {
+      // when notification is received save to server when it was opened
+      console.log(data);
+    })
   }
 
   handleNewTask() {
@@ -92,6 +106,53 @@ class MissionControlApp extends React.Component {
       .then(data => {
         let missionData = data.data;
         this.props.dispatch(addNewMission(missionData));
+        // Schedule local notifications
+        // generate times for notification
+        const due_date = due_date_obj.datetime;
+        const notificationTimes = generateNotificationTimes(due_date);
+        // use below to test
+        // const notificationTimes = [moment().add(10, 'seconds')];
+        notificationTimes.forEach((notificationTime) => {
+          const time = notificationTime.toDate();
+          const schedulingOptions = { time };
+          const hours_left = notificationTime.diff(moment(), 'hours');
+          const display_time = hours_left < 24 ? `${hours_left} hours` :
+            `${notificationTime.diff(moment(), 'days')} days`;
+          const localNotification = {
+            title: 'YO From Mission Control',
+            body: `Don't forget to ${missionData.description}! You have ${display_time} left!`,
+          }
+
+          // schedule those locally
+          Notifications.scheduleLocalNotificationAsync(
+            localNotification, schedulingOptions
+          )
+          .then(localNotificationId => {
+            // use unique ids and save those on the server, as well as time of notification
+            fetch(`${HOST_NAME}/notifications/create`, {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                mission_id: missionData.id,
+                notification_datetime: notificationTime,
+                local_notification_id: localNotificationId,
+              })
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status !== 'SUCCESS') {
+                throw new Error('Something went wrong on server when saving notification');
+              }
+            })
+          });
+
+          // add to complete action, get all IDs from backend
+          // of remaining notifications and dismiss them
+          // Expo.Notifications.cancelScheduledNotificationAsync(localNotificationId)
+        });
       });
       // reset UI
       this.setState((prevState, props) => {
