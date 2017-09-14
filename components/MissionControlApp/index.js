@@ -17,6 +17,7 @@ import TaskDueDate from '../TaskDueDate';
 import { addNewMission } from '../../redux/actions';
 import { dueDateCategories } from '../../utils/dueDateCategories';
 import { generateNotificationTimes } from '../../utils/generateNotificationTimes';
+import { registerForPushNotificationsAsync } from '../../utils/registerForPushNotificationsAsync';
 import { HOST_NAME } from '../../utils/host_name';
 
 class MissionControlApp extends React.Component {
@@ -39,11 +40,8 @@ class MissionControlApp extends React.Component {
     };
   }
 
-  async componentDidMount() {
-    let result = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-    if (result.status === 'granted') {
-     console.log('Notification permissions granted.')
-    }
+  componentDidMount() {
+    registerForPushNotificationsAsync();
 
     const notification_listener = Notifications.addListener(({ origin, data, remote }) => {
       // when notification is received save to server when it was opened
