@@ -42,9 +42,34 @@ class MissionControlApp extends React.Component {
   componentDidMount() {
     registerForPushNotificationsAsync();
 
-    const notification_listener = Notifications.addListener((notification) => {
+    const notification_listener = Notifications.addListener(({ origin, data, remote }) => {
       // when notification is received save to server when it was opened
-      console.log(notification.data);
+      let body = {
+        notification_id: data.notification_id,
+      };
+
+      if (origin === 'selected') {
+        Object.assign(body, {
+          status: 'acknowledged',
+          acknowledged_at: new Date(),
+        });
+      } else {
+        Object.assign(body, { status: 'received' });
+      }
+
+      fetch(`${HOST_NAME}/notifications/update`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Server failed on notification update');
+        }
+      });
     })
   }
 
@@ -103,7 +128,6 @@ class MissionControlApp extends React.Component {
       .then(data => {
         let missionData = data.data;
         this.props.dispatch(addNewMission(missionData));
-
       });
       // reset UI
       this.setState((prevState, props) => {
