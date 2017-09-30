@@ -16,11 +16,13 @@ import Swipeable from 'react-native-swipeable';
 import { dueDateCategories } from '../../utils/dueDateCategories';
 import { removeMission } from '../../redux/actions';
 import { HOST_NAME } from '../../utils/host_name';
+import TaskListItem from '../TaskListItem';
 
 export default class TaskList extends React.Component {
   constructor(props) {
     super(props);
     this.renderItem = this.renderItem.bind(this);
+    this.setSectionListScroll = this.setSectionListScroll.bind(this);
 
     this.state = {
       sectionListScrollEnabled: true
@@ -33,57 +35,17 @@ export default class TaskList extends React.Component {
     >{section.sectionName}</Text>;
   }
 
+  setSectionListScroll(bool) {
+    return () => this.setState({ sectionListScrollEnabled: bool });
+  }
+
   renderItem({item}) {
-    const onRightActionRelease = () => {
-      fetch(`${HOST_NAME}/missionstatus/update`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          mission_id: item.id,
-          status: 'complete',
-        })
-      })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(`Network response failed somehow.`);
-      })
-      .then(data => {
-        if (data.status == 'SUCCESS') {
-          // for now just remove mission from list
-          this.props.dispatch(removeMission(item.id));
-        }
-      })
-      .catch((error) => {
-        Alert.alert(
-          'Sorry',
-          `Fetch failed sorry dude: ${error}`
-        );
-      });
-    };
-
-    const rightButtons = [
-      <TouchableHighlight
-        style={{flex: 1, justifyContent: 'center', backgroundColor: '#54a3ff'}}
-        onPress={onRightActionRelease}>
-        <Text style={{paddingLeft: 6, color: 'white'}}>Complete</Text>
-      </TouchableHighlight>,
-    ];
-
     return (
-      <Swipeable
-        rightButtons={rightButtons}
-        onRightActionRelease={onRightActionRelease}
-        rightActionActivationDistance={300}
-        onSwipeStart={() => this.setState({sectionListScrollEnabled: false})}
-        onSwipeRelease={() => this.setState({sectionListScrollEnabled: true})}
-      >
-        <ListItem title={item.description}/>
-      </Swipeable>
+      <TaskListItem
+        setSectionListScroll={this.setSectionListScroll}
+        item={item}
+        dispatch={this.props.dispatch}
+      />
     );
   }
 
@@ -96,18 +58,16 @@ export default class TaskList extends React.Component {
         };
       });
 
-    let sectionList = <SectionList
-      renderSectionHeader={this.renderSectionHeader}
-      renderItem={this.renderItem}
-      keyExtractor={(item) => item.description}
-      sections={sections}
-      scrollEnabled={this.state.sectionListScrollEnabled}
-    />;
-
     return (
       <View style={styles.container}>
         <List style={styles.list}>
-          {sectionList}
+          <SectionList
+            renderSectionHeader={this.renderSectionHeader}
+            renderItem={this.renderItem}
+            keyExtractor={(item) => item.description}
+            sections={sections}
+            scrollEnabled={this.state.sectionListScrollEnabled}
+          />
         </List>
       </View>
     );
