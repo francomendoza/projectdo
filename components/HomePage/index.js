@@ -20,6 +20,7 @@ export default class HomePage extends React.Component {
         />
         <TaskList
           tasks_by_due_date_category={this.props.tasks_by_due_date_category}
+          onEditTask={this.props.onEditTask}
           dispatch={this.props.dispatch}
         />
       </View>

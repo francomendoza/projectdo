@@ -1,8 +1,9 @@
 import { combineReducers } from 'redux';
-import { missions } from './missions';
+import { mission_ids, missions_by_id } from './missions';
 
 const rootReducer = combineReducers({
-    missions
+    mission_ids,
+    missions_by_id
   });
-  
+
 export default rootReducer;

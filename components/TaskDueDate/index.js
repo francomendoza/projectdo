@@ -22,14 +22,16 @@ export default class TaskDueDate extends React.Component {
           onPress={this.props.onCancel}
         />
         {this.state.buttons.map((button_name, index) => {
-          return <Button
-            onPress={this.props.selectDueDate(button_name)}
-            title={button_name}
-            backgroundColor='#54a3ff'
-            key={index + button_name}
-            style={styles.button}
-            raised
-          />;
+          return (
+            <Button
+              onPress={this.props.selectDueDate(button_name)}
+              title={button_name}
+              backgroundColor='#54a3ff'
+              key={index + button_name}
+              style={styles.button}
+              raised
+            />
+          );
         })}
       </View>
     );

@@ -14,6 +14,7 @@ import HomePage from '../HomePage';
 import TaskInput from '../TaskInput';
 import TaskCategorySelector from '../TaskCategorySelector';
 import TaskDueDate from '../TaskDueDate';
+import TaskEdit from '../TaskEdit';
 import { addNewMission } from '../../redux/actions';
 import { dueDateCategories } from '../../utils/dueDateCategories';
 import { registerForPushNotificationsAsync } from '../../utils/registerForPushNotificationsAsync';
@@ -28,6 +29,7 @@ class MissionControlApp extends React.Component {
     this.handleOnNewTaskChange = this.handleOnNewTaskChange.bind(this);
     this.handleOnCancel = this.handleOnCancel.bind(this);
     this.handleSelectDueDate = this.handleSelectDueDate.bind(this);
+    this.handleOnEditTask = this.handleOnEditTask.bind(this);
 
     this.state = {
       page: 'action',
@@ -173,12 +175,22 @@ class MissionControlApp extends React.Component {
     });
   }
 
+  handleOnEditTask(item) {
+    return () => {
+      this.setState({
+        page: 'task_edit',
+        edit_task_id: item.id
+      });
+    }
+  }
+
   render() {
     let comp;
     if (this.state.page === 'action') {
       comp = <HomePage
         tasks_by_due_date_category={this.props.tasks_by_due_date_category}
         handleNewTask={this.handleNewTask}
+        onEditTask={this.handleOnEditTask}
         dispatch={this.props.dispatch}
       />;
     } else if (this.state.page === 'category_selection') {
@@ -196,6 +208,13 @@ class MissionControlApp extends React.Component {
     } else if (this.state.page === 'due_date') {
       comp = <TaskDueDate
         selectDueDate={this.handleSelectDueDate}
+      />
+    } else if (this.state.page === 'task_edit') {
+      comp = <TaskEdit
+        task={this.props.tasks_by_id[this.state.edit_task_id]}
+        dispatch={this.props.dispatch}
+        onSave={() => this.setState({ page: 'action' })}
+        onCancel={this.handleOnCancel}
       />
     }
 
@@ -224,8 +243,9 @@ const styles = StyleSheet.create({
   }
 });
 
-const generateTasksByDueDate = (tasks) => {
-  return tasks.reduce((accum, task) => {
+const generateTasksByDueDate = (state) => {
+  return state.mission_ids.reduce((accum, mission_id) => {
+    let task = state.missions_by_id[mission_id];
 
     let cat = dueDateCategories.find((cat) => {
       if (cat.label === 'Eventually') {
@@ -254,8 +274,9 @@ const generateTasksByDueDate = (tasks) => {
 
 const mapStateToProps = (state) => {
   return {
-    tasks: state.missions,
-    tasks_by_due_date_category: generateTasksByDueDate(state.missions)
+    task_ids: state.mission_ids,
+    tasks_by_id: state.missions_by_id,
+    tasks_by_due_date_category: generateTasksByDueDate(state),
   };
 }
 

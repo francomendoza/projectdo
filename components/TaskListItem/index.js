@@ -72,7 +72,10 @@ export default class TaskListItem extends React.Component {
         onSwipeStart={this.props.setSectionListScroll(false)}
         onSwipeRelease={this.props.setSectionListScroll(true)}
       >
-        <ListItem title={this.props.item.description}/>
+        <ListItem
+          title={this.props.item.description}
+          onPress={this.props.onEditTask(this.props.item)}
+        />
       </Swipeable>
     );
   }

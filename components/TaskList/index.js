@@ -44,6 +44,7 @@ export default class TaskList extends React.Component {
       <TaskListItem
         setSectionListScroll={this.setSectionListScroll}
         item={item}
+        onEditTask={this.props.onEditTask}
         dispatch={this.props.dispatch}
       />
     );
