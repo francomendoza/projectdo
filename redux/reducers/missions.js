@@ -24,7 +24,8 @@ export function missions_by_id(state = {}, action) {
         [action.new_mission.id]: action.new_mission
       });
     case 'REMOVE_MISSION':
-      return delete state[action.mission_id];
+      delete state[action.mission_id];
+      return Object.assign({}, state);
     case 'UPDATE_MISSION_DUE_DATE':
       let mission_to_update = state[action.mission_id];
       let updated_mission = Object.assign(
