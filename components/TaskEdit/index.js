@@ -16,8 +16,10 @@ export default class TaskEdit extends React.Component {
     this.handleOnDateChange = this.handleOnDateChange.bind(this);
     this.handleOnSave = this.handleOnSave.bind(this);
 
+    this.today = new Date();
+
     this.state = {
-      due_date: new Date()
+      due_date: this.today
     };
   }
 
@@ -71,6 +73,7 @@ export default class TaskEdit extends React.Component {
         />
         <DatePickerIOS
           date={this.state.due_date}
+          minimumDate={this.today}
           onDateChange={this.handleOnDateChange}
           mode='date'
         />
