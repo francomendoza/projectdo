@@ -4,18 +4,44 @@ import {
   View,
 } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
+import CustomDateSelector from '../CustomDateSelector';
 
 export default class TaskDueDate extends React.Component {
   constructor(props) {
     super(props);
+    this.toggleCustomDatePicker = this.toggleCustomDatePicker.bind(this);
+    this.handleOnCustomDateChange = this.handleOnCustomDateChange.bind(this);
+
     this.state = {
-      buttons: ['EOD', 'EODTomorrow', 'EOWeek', 'EOWeekend', 'EOMonth', 'EOYear', 'Eventually']
+      buttons: ['EOD', 'EODTomorrow', 'EOWeek', 'EOWeekend', 'EOMonth', 'EOYear', 'Eventually'],
+      displayCustomDatePicker: false,
+      custom_date: new Date(),
     };
   }
 
+  toggleCustomDatePicker() {
+    this.setState((prevState) => {
+      return {
+        displayCustomDatePicker: !prevState.displayCustomDatePicker
+      };
+    });
+  }
+
+  handleOnCustomDateChange(date) {
+    this.setState({custom_date: date});
+  }
+
   render() {
-    return (
-      <View>
+    let dateComponent;
+    if (this.state.displayCustomDatePicker) {
+      dateComponent = <CustomDateSelector
+        onCancel={this.toggleCustomDatePicker}
+        date={this.state.custom_date}
+        onDateChange={this.handleOnCustomDateChange}
+        onSave={this.props.selectDueDate('Custom', this.state.custom_date)}
+      />;
+    } else {
+      dateComponent = <View>
         <Icon
           name='close'
           color='#00aced'
@@ -33,7 +59,18 @@ export default class TaskDueDate extends React.Component {
             />
           );
         })}
-      </View>
+        <Button
+          onPress={this.toggleCustomDatePicker}
+          title='Custom'
+          backgroundColor='#54a3ff'
+          style={styles.button}
+          raised
+        />
+      </View>;
+    }
+
+    return (
+      dateComponent
     );
   }
 }

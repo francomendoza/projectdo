@@ -9,6 +9,7 @@ import { Button, Icon } from 'react-native-elements';
 import { updateMissionDueDate } from '../../redux/actions';
 import moment from 'moment';
 import { HOST_NAME } from '../../utils/host_name';
+import CustomDateSelector from '../CustomDateSelector';
 
 export default class TaskEdit extends React.Component {
   constructor(props) {
@@ -66,22 +67,11 @@ export default class TaskEdit extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Icon
-          name='close'
-          color='#00aced'
-          onPress={this.props.onCancel}
-        />
-        <DatePickerIOS
+        <CustomDateSelector
+          onCancel={this.props.onCancel}
           date={this.state.due_date}
-          minimumDate={this.today}
           onDateChange={this.handleOnDateChange}
-          mode='date'
-        />
-        <Button
-          onPress={this.handleOnSave}
-          title='Save'
-          backgroundColor='#54a3ff'
-          raised
+          onSave={this.handleOnSave}
         />
       </View>
     );
