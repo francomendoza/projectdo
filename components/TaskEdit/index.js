@@ -7,71 +7,68 @@ import {
 } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import { updateMissionDueDate } from '../../redux/actions';
+import { dueDateCategories } from '../../utils/dueDateCategories';
 import moment from 'moment';
 import { HOST_NAME } from '../../utils/host_name';
-import CustomDateSelector from '../CustomDateSelector';
+import TaskDueDate from '../TaskDueDate';
 
 export default class TaskEdit extends React.Component {
   constructor(props) {
     super(props);
-    this.handleOnDateChange = this.handleOnDateChange.bind(this);
-    this.handleOnSave = this.handleOnSave.bind(this);
-
-    this.today = new Date();
-
-    this.state = {
-      due_date: this.today
-    };
+    this.selectDueDate = this.selectDueDate.bind(this);
   }
 
-  handleOnDateChange(due_date) {
-    this.setState({ due_date });
-  }
+  selectDueDate(option, date) {
+    return () => {
+      let due_date;
+      if (!date) {
+        let due_date_obj = dueDateCategories.find(cat => cat.label === option);
+        due_date = due_date_obj.datetime;
+      } else {
+        due_date = moment(date).endOf('day');
+      }
 
-  handleOnSave() {
-    let due_date = moment(this.state.due_date).endOf('day');
-    fetch(`${HOST_NAME}/missionduedate/update`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        mission_id: this.props.task.id,
-        due_date,
-        option: 'custom',
+      fetch(`${HOST_NAME}/missionduedate/update`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          mission_id: this.props.task.id,
+          due_date,
+          option,
+        })
       })
-    })
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error(`Network response failed somehow.`);
-    })
-    .then(data => {
-      if (data.status == 'SUCCESS') {
-        this.props.dispatch(
-          updateMissionDueDate(this.props.task.id, due_date)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(`Network response failed somehow.`);
+      })
+      .then(data => {
+        if (data.status == 'SUCCESS') {
+          this.props.dispatch(
+            updateMissionDueDate(this.props.task.id, due_date)
+          );
+          this.props.onSave();
+        }
+      })
+      .catch((error) => {
+        Alert.alert(
+          'Sorry',
+          `Fetch failed sorry dude: ${error}`
         );
-        this.props.onSave();
-      }
-    })
-    .catch((error) => {
-      Alert.alert(
-        'Sorry',
-        `Fetch failed sorry dude: ${error}`
-      );
-    });
+      });
+    };
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <CustomDateSelector
+        <TaskDueDate
           onCancel={this.props.onCancel}
-          date={this.state.due_date}
-          onDateChange={this.handleOnDateChange}
-          onSave={this.handleOnSave}
+          selectDueDate={this.selectDueDate}
         />
       </View>
     );
@@ -80,6 +77,8 @@ export default class TaskEdit extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    width: 300
+    width: 300,
+    alignItems: 'center',
+    flex: 1
   }
 });
