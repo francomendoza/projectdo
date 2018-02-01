@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import CustomDateSelector from '../CustomDateSelector';
+import { dueDateCategories } from '../../utils/dueDateCategories';
 
 export default class TaskDueDate extends React.Component {
   constructor(props) {
@@ -47,13 +48,13 @@ export default class TaskDueDate extends React.Component {
           color='#00aced'
           onPress={this.props.onCancel}
         />
-        {this.state.buttons.map((button_name, index) => {
+        {dueDateCategories.map((cat, index) => {
           return (
             <Button
-              onPress={this.props.selectDueDate(button_name)}
-              title={button_name}
+              onPress={this.props.selectDueDate(cat.label)}
+              title={cat.label}
               backgroundColor='#54a3ff'
-              key={index + button_name}
+              key={index + cat.label}
               style={styles.button}
               raised
             />
