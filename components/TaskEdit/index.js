@@ -77,7 +77,7 @@ export default class TaskEdit extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    width: 300,
+    width: 350,
     alignItems: 'center',
     flex: 1
   }

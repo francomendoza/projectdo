@@ -2,6 +2,7 @@ import React from 'react';
 import {
   StyleSheet,
   View,
+  ScrollView
 } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import CustomDateSelector from '../CustomDateSelector';
@@ -47,25 +48,27 @@ export default class TaskDueDate extends React.Component {
           color='#00aced'
           onPress={this.props.onCancel}
         />
-        {dueDateCategories.map((cat, index) => {
-          return (
-            <Button
-              onPress={this.props.selectDueDate(cat.label)}
-              title={cat.label}
-              backgroundColor='#54a3ff'
-              key={index + cat.label}
-              style={styles.button}
-              raised
-            />
-          );
-        })}
-        <Button
-          onPress={this.toggleCustomDatePicker}
-          title='Custom'
-          backgroundColor='#54a3ff'
-          style={styles.button}
-          raised
-        />
+        <ScrollView>
+          {dueDateCategories.map((cat, index) => {
+            return (
+              <Button
+                onPress={this.props.selectDueDate(cat.label)}
+                title={cat.label}
+                backgroundColor='#54a3ff'
+                key={index + cat.label}
+                style={styles.button}
+                raised
+              />
+            );
+          })}
+          <Button
+            onPress={this.toggleCustomDatePicker}
+            title='Custom'
+            backgroundColor='#54a3ff'
+            style={styles.button}
+            raised
+          />
+        </ScrollView>
       </View>;
     }
 
@@ -78,6 +81,7 @@ export default class TaskDueDate extends React.Component {
 const styles = StyleSheet.create({
   button: {
     width: 300,
-    margin: 10
+    marginTop: 10,
+    marginBottom: 10
   }
 });
