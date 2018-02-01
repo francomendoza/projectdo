@@ -14,7 +14,6 @@ export default class TaskDueDate extends React.Component {
     this.handleOnCustomDateChange = this.handleOnCustomDateChange.bind(this);
 
     this.state = {
-      buttons: ['EOD', 'EODTomorrow', 'EOWeek', 'EOWeekend', 'EOMonth', 'EOYear', 'Eventually'],
       displayCustomDatePicker: false,
       custom_date: new Date(),
     };
