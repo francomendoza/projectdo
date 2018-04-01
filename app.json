@@ -3,7 +3,7 @@
     "name": "Mission Control",
     "icon": "",
     "version": "0.0.0",
-    "sdkVersion": "19.0.0",
+    "sdkVersion": "25.0.0",
     "ios": {
       "bundleIdentifier": "com.flashback.missioncontrol"
     }
